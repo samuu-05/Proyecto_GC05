@@ -5,20 +5,21 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-permissions:
-  contents: read
 jobs:
   scan:
-    if: github.repository == 'samuu-05/Proyecto_GC05' && vars.SONAR_PROJECT_KEY != '' && vars.SONAR_ORGANIZATION != ''
+    if: github.repository == 'samuu-05/Proyecto_GC05' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
-      - uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          persist-credentials: false
+      - uses: SonarSource/sonarqube-auth-action@v1.2
+      - uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4
         with:
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.organization=samuu-05
+            -Dsonar.projectKey=samuu-05_Proyecto_GC05
