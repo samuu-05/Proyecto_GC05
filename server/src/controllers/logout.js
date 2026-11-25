@@ -1,7 +1,7 @@
 /** Invalida la sesión autenticada y elimina su cookie. */
 export function logoutController() {
   return (req, res, next) => {
-    if (!req.session || !req.session.userId) {
+    if (!req.session?.userId) {
       return res.status(401).json({
         message: 'No hay una sesión activa.',
       });

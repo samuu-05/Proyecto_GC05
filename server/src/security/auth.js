@@ -10,7 +10,7 @@ export function requireAuth(users) {
     if (!userId) return unauthenticated();
     try {
       const user = await users.findById(userId);
-      if (!user || !user.activo) {
+      if (!user?.activo) {
         // Sesión huérfana o de una cuenta desactivada: se elimina antes de responder.
         return req.session.destroy(() => unauthenticated());
       }

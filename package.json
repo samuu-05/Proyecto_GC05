@@ -38,6 +38,7 @@
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.9",
     "@vitejs/plugin-react": "^6.3.0",
+    "@vitest/coverage-v8": "5.1.0",
     "concurrently": "^10.0.7",
     "jsdom": "^26.1.0",
     "supertest": "^7.3.2",
