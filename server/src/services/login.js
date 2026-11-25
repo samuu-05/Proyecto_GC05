@@ -35,7 +35,7 @@ export function createLoginService(users) {
     const credencialesIncorrectas = () =>
       new LoginError(401, 'Correo o contraseña incorrectos.');
 
-    if (!usuario || !usuario.activo || !usuario.password_hash) {
+    if (!usuario?.activo || !usuario.password_hash) {
       throw credencialesIncorrectas();
     }
 

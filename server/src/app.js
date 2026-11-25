@@ -31,6 +31,59 @@ import { createAvisoRepository } from './repositories/avisos.js';
 import { createAvisoService, AvisoError } from './services/avisos.js';
 import { avisoController } from './controllers/avisos.js';
 
+// Comprobar el formato de las peticiones JSON.
+function requireJson(req, res, next) {
+  if (!req.is('application/json')) {
+    return res.status(415).json({
+      message: 'Envía los datos en formato JSON.',
+    });
+  }
+
+  next();
+}
+
+// Protección CSRF mediante lista de orígenes permitidos.
+function requireSameOrigin(req, res, next) {
+  const origin = req.get('Origin');
+  const fetchSite = req.get('Sec-Fetch-Site');
+
+  const reject = () =>
+    res.status(403).json({
+      message: 'Origen de la petición no permitido.',
+    });
+
+  // Nunca permitir peticiones cross-site.
+  if (fetchSite === 'cross-site') {
+    return reject();
+  }
+
+  // Orígenes expresamente autorizados.
+  const allowedOrigins = new Set([
+    `${req.protocol}://${req.get('host')}`,
+    ...(process.env.NODE_ENV !== 'production'
+      ? ['http://localhost:5173']
+      : []),
+    ...(process.env.APP_ORIGIN
+      ? [process.env.APP_ORIGIN]
+      : []),
+  ]);
+
+  if (origin) {
+    if (!allowedOrigins.has(origin)) {
+      return reject();
+    }
+
+    return next();
+  }
+
+  // Sin Origin, exigir same-origin.
+  if (fetchSite === 'same-origin') {
+    return next();
+  }
+
+  return reject();
+}
+
 /** App independiente del puerto y de la conexión a PostgreSQL. */
 export function createApp({
   users,
@@ -61,60 +114,6 @@ export function createApp({
   if (sessionMiddleware) {
     app.use('/api', sessionMiddleware);
   }
-
-  // Comprobar el formato de las peticiones JSON.
-  function requireJson(req, res, next) {
-    if (!req.is('application/json')) {
-      return res.status(415).json({
-        message: 'Envía los datos en formato JSON.',
-      });
-    }
-
-    next();
-  }
-
-  // Protección CSRF mediante lista de orígenes permitidos.
-  function requireSameOrigin(req, res, next) {
-    const origin = req.get('Origin');
-    const fetchSite = req.get('Sec-Fetch-Site');
-
-    const reject = () =>
-      res.status(403).json({
-        message: 'Origen de la petición no permitido.',
-      });
-
-    // Nunca permitir peticiones cross-site.
-    if (fetchSite === 'cross-site') {
-      return reject();
-    }
-
-    // Orígenes expresamente autorizados.
-    const allowedOrigins = new Set([
-      `${req.protocol}://${req.get('host')}`,
-      ...(process.env.NODE_ENV !== 'production'
-        ? ['http://localhost:5173']
-        : []),
-      ...(process.env.APP_ORIGIN
-        ? [process.env.APP_ORIGIN]
-        : []),
-    ]);
-
-    if (origin) {
-      if (!allowedOrigins.has(origin)) {
-        return reject();
-      }
-
-      return next();
-    }
-
-    // Sin Origin, exigir same-origin.
-    if (fetchSite === 'same-origin') {
-      return next();
-    }
-
-    return reject();
-  }
-
 
   // Registro de usuarios: conservar la funcionalidad de Marcos.
   app.post(
