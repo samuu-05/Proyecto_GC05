@@ -6,16 +6,28 @@ const sections = [
     'Objetos encontrados',
     'Publica lo que encuentres y consulta los hallazgos del campus.',
     'Consulta y búsqueda pendientes · US-009',
+    [
+      ['#buscar-hallazgos', 'Buscar hallazgos'],
+      ['#publicar-hallazgo', 'Publicar un hallazgo'],
+      ['#mis-hallazgos', 'Mis hallazgos'],
+    ],
   ],
   [
     'Avisos de pérdida',
     'Un espacio para avisar de lo que has perdido.',
     'Publicación y consulta de avisos · US-013 y US-014',
+    [
+      ['#publicar-aviso', 'Publicar un aviso de pérdida'],
+      ['#feed-avisos', 'Consultar avisos de pérdida'],
+    ],
   ],
   [
     'Tu perfil',
     'Tus datos y la información de contacto.',
     'Pendiente de integración · US-005',
+    [
+      ['#perfil', 'Acceder a mi perfil'],
+    ],
   ],
 ];
 
@@ -53,16 +65,16 @@ export function HomePage({
       </header>
 
       {notice && (
-        <p className="success" role="status">
+        <output className="success">
           {notice}
-        </p>
+        </output>
       )}
 
       {demo && (
-        <p className="demo-banner" role="status">
+        <output className="demo-banner">
           Demostración visual: no hay una sesión real ni se
           envían peticiones de acceso o cierre.
-        </p>
+        </output>
       )}
 
       <section className="hero" aria-labelledby="home-title">
@@ -112,51 +124,14 @@ export function HomePage({
         className="home-grid"
         aria-label="Espacios de la plataforma"
       >
-        {sections.map(([title, description, status]) => (
+        {sections.map(([title, description, status, links]) => (
           <article className="card" key={title}>
             <h2>{title}</h2>
             <p>{description}</p>
 
-            {title === 'Tu perfil' && user && !demo ? (
-              <p>
-                <a href="#perfil">
-                  Acceder a mi perfil
-                </a>
-              </p>
-            ) : title === 'Objetos encontrados' && user && !demo ? (
-              <>
-                <p>
-                  <a href="#buscar-hallazgos">
-                    Buscar hallazgos
-                  </a>
-                </p>
-                <p>
-                  <a href="#publicar-hallazgo">
-                    Publicar un hallazgo
-                  </a>
-                </p>
-                <p>
-                  <a href="#mis-hallazgos">
-                    Mis hallazgos
-                  </a>
-                </p>
-              </>
-            ) : title === 'Avisos de pérdida' && user && !demo ? (
-              <>
-                <p>
-                  <a href="#publicar-aviso">
-                    Publicar un aviso de pérdida
-                  </a>
-                </p>
-                <p>
-                  <a href="#feed-avisos">
-                    Consultar avisos de pérdida
-                  </a>
-                </p>
-              </>
-            ) : (
-              <p className="help">{status}</p>
-            )}
+            {user && !demo ? links.map(([href, label]) => (
+              <p key={href}><a href={href}>{label}</a></p>
+            )) : <p className="help">{status}</p>}
           </article>
         ))}
       </section>

@@ -23,6 +23,7 @@ button:disabled { opacity: .65; cursor: wait; }
 .help { font-size: .9rem; color: #455f58; margin: .4rem 0; }
 .error { color: #a02121; }
 .success { color: #085d50; }
+output.success, output.demo-banner { display: block; margin-block: 1em; }
 p.error:empty { margin: 0; }
 @media (max-width: 480px) { main { margin-top: 1.5rem; } .card { padding: 1.25rem; } }
 
