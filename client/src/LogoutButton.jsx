@@ -15,8 +15,8 @@ export function LogoutButton({ onLogout, demo = false, csrfToken }) {
       // Solo la demostración explícita evita la API. El acceso real siempre la llama.
       if (!demo) await logout({ csrfToken });
       onLogout();
-    } catch (failure) {
-      setError(failure.message);
+    } catch (error_) {
+      setError(error_.message);
     } finally {
       busy.current = false;
       setPending(false);

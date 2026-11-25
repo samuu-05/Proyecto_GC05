@@ -42,7 +42,7 @@ export function LoginForm({ onLogin, notice = '' }) {
     <section className="card" aria-labelledby="login-title">
       <h1 id="login-title">Inicia sesión</h1>
       <p>Accede con el correo y la contraseña de tu cuenta.</p>
-      {notice && <p role="status" className="success">{notice}</p>}
+      {notice && <output className="success">{notice}</output>}
       {!user && <form onSubmit={submit} aria-busy={pending}>
         <label htmlFor="login-email">Correo electrónico</label>
         <input id="login-email" name="email" type="email" autoComplete="username" required maxLength={254}
