@@ -11,6 +11,15 @@ import { MyFindingsPage } from './MyFindingsPage.jsx';
 import { PublishLostNoticePage } from './PublishLostNoticePage.jsx';
 import { FeedAvisosPage } from './FeedAvisosPage.jsx';
 
+const sessionPages = new Map([
+  ['#perfil', ProfilePage],
+  ['#publicar-hallazgo', PublishFindingPage],
+  ['#mis-hallazgos', MyFindingsPage],
+  ['#buscar-hallazgos', SearchFindingsPage],
+  ['#publicar-aviso', PublishLostNoticePage],
+  ['#feed-avisos', FeedAvisosPage],
+]);
+
 /** Navegación de registro, inicio de sesión, perfil y cierre de sesión. */
 export function App() {
   const [hash, setHash] = useState(() => window.location.hash);
@@ -89,36 +98,8 @@ export function App() {
     return <LoginForm onLogin={authenticated} notice={notice} />;
   }
 
-  // Perfil real: el backend comprueba que exista una sesión válida.
-  // No se permite consultar el perfil desde la demostración.
-  if (hash === '#perfil' && !demo) {
-    return <ProfilePage />;
-  }
-
-  // US-008: publicar un hallazgo. El backend exige una sesión válida.
-  if (hash === '#publicar-hallazgo' && !demo) {
-    return <PublishFindingPage />;
-  }
-
-  // US-010: gestionar los hallazgos propios.
-  if (hash === '#mis-hallazgos' && !demo) {
-    return <MyFindingsPage />;
-  }
-
-  // US-009: buscar hallazgos.
-  if (hash === '#buscar-hallazgos' && !demo) {
-    return <SearchFindingsPage />;
-  }
-
-  // US-013: publicar un aviso de pérdida.
-  if (hash === '#publicar-aviso' && !demo) {
-    return <PublishLostNoticePage />;
-  }
-
-    // SCRUM-57 / US-014: consultar el feed de avisos.
-  if (hash === '#feed-avisos' && !demo) {
-    return <FeedAvisosPage />;
-  }
+  const Page = demo ? undefined : sessionPages.get(hash);
+  if (Page) return <Page />;
 
   // Portada pública o pantalla del usuario autenticado.
   return (
