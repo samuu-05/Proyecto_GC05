@@ -30,18 +30,19 @@ const categorias = [
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
+async function seedCatalog(table, names) {
+  const values = names.flatMap(name => [randomUUID(), name]);
+  const placeholders = names.map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2})`).join(', ');
+  const { rowCount } = await pool.query(
+    `INSERT INTO ${table} (id, nombre) VALUES ${placeholders} ON CONFLICT (nombre) DO NOTHING`,
+    values,
+  );
+  console.log(`${table}: ${rowCount} nuevas, ${names.length - rowCount} ya existían.`);
+}
+
 try {
-  for (const [table, names] of [['facultades', facultades], ['categorias', categorias]]) {
-    let created = 0;
-    for (const nombre of names) {
-      const { rowCount } = await pool.query(
-        `INSERT INTO ${table} (id, nombre) VALUES ($1, $2) ON CONFLICT (nombre) DO NOTHING`,
-        [randomUUID(), nombre],
-      );
-      created += rowCount;
-    }
-    console.log(`${table}: ${created} nuevas, ${names.length - created} ya existían.`);
-  }
+  await seedCatalog('facultades', facultades);
+  await seedCatalog('categorias', categorias);
 } catch {
   console.error('No se pudieron cargar los datos de desarrollo. Ejecuta antes npm run db:migrate.');
   process.exitCode = 1;
