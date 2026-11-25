@@ -23,15 +23,12 @@ try {
     '009-avisos.sql',
   ];
 
-  for (const filename of migrations) {
-    const sql = await readFile(
-      new URL(`../db/migrations/${filename}`, import.meta.url),
-      'utf8',
-    );
-
+  await migrations.reduce(async (previous, filename) => {
+    await previous;
+    const sql = await readFile(new URL(`../db/migrations/${filename}`, import.meta.url), 'utf8');
     await pool.query(sql);
     console.log(`Migración preparada: ${filename}`);
-  }
+  }, Promise.resolve());
 } catch {
   console.error(
     'No se pudo preparar la base de datos. Revisa su disponibilidad y configuración.',
