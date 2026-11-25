@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/vitest';
 import { LoginForm } from './LoginForm.jsx';
@@ -106,5 +106,5 @@ it('permite navegar desde registro a login y volver', async () => {
   await user.click(screen.getByRole('link', { name: 'Iniciar sesión' }));
   expect(await screen.findByRole('heading', { name: 'Inicia sesión' })).toBeInTheDocument();
   await user.click(screen.getByRole('link', { name: 'Crear cuenta' }));
-  await waitFor(() => expect(screen.getByRole('heading', { name: 'Crea tu cuenta' })).toBeInTheDocument());
+  expect(await screen.findByRole('heading', { name: 'Crea tu cuenta' })).toBeInTheDocument();
 });
